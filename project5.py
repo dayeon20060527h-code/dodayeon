@@ -1,15 +1,38 @@
-# 사용자로부터 n 입력받기
-n = int(input())
+import sys
 
-# 메모이제이션을 위한 리스트 초기화 (n이 90까지 가능하므로 넉넉하게 91개 생성)
-memo = [0] * 91
+# 입력된 모든 값을 공백/줄바꿈 기준으로 분리
+data = sys.stdin.read().split()
 
-# 기본값 설정
-memo[1] = 1
+# 첫 번째 값: N, 두 번째 값: M
+n = int(data[0])
+m = int(data[1])
 
-# 2부터 n까지 차례대로 계산하며 리스트에 저장
-for i in range(2, n + 1):
-    memo[i] = memo[i-1] + memo[i-2]
+# 세 번째 값부터 끝까지: 떡의 높이들
+heights = list(map(int, data[2:]))
 
-# 결과 출력
-print(memo[n])
+# 이진 탐색 범위 설정
+start = 0
+end = max(heights)
+
+result = 0
+
+# 이진 탐색 (Binary Search) 수행
+while start <= end:
+    mid = (start + end) // 2
+    
+    # 절단기 높이(mid)로 잘랐을 때 가져갈 수 있는 떡의 길이 합 계산
+    total = 0
+    for h in heights:
+        if h > mid:
+            total += (h - mid)
+            
+    # 가져갈 떡의 길이가 충분한 경우: 
+    # 더 높게 자를 수 있는지 확인하기 위해 결과를 기록하고 오른쪽 탐색
+    if total >= m:
+        result = mid
+        start = mid + 1
+    # 길이가 부족한 경우: 더 많이 가져가야 하므로 낮게 잘라야 함 (왼쪽 탐색)
+    else:
+        end = mid - 1
+
+print(result)
